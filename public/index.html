@@ -26,8 +26,9 @@
 	<div class="container">
 
     <div class="row" ng-repeat="chunk in chunks">
+      <img class="player" src="img/p.png"></img>
       <div class="map-row" ng-repeat="row in chunk.map">
-        <img ng-repeat="col in row track by $index" class="tile" src="img/{{row[col]}}.png">
+        <img ng-repeat="col in row track by $index" class="tile" src="img/{{row[col]}}.png"></img>
       </div>
     </div>
 

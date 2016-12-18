@@ -33,10 +33,20 @@ const getChunks = (res) => {
   });
 };
 
+var createUUID = function(req) {
+  var ip = req.connection.remoteAddress;
+  var hash = crypto.createHash('sha256')
+          .update(ip+'s3cretS4lt', 'utf8').digest('hex')
+  return hash;
+}
+
 module.exports = function(app) {
 
 	app.param('playerId', function(req, res, next, uuid) {
 
+    if (uuid === 'new') {
+      uuid = createUUID(req);
+    }
 		Player.findOne({uuid: uuid}, (err, player) => {
 			if (err) {
 				return next(err);
@@ -50,13 +60,9 @@ module.exports = function(app) {
 
   app.get('/api/players/:playerId', function (req, res) {
     if (!req.player) {
-      // if no player, create one
-      var ip = req.connection.remoteAddress;
-      var hash = crypto.createHash('sha256')
-              .update(ip+'s3cretS4lt', 'utf8').digest('hex')
-      console.log(hash);
+      var uuid = createUUID(req);
       Player.create({
-        uuid: hash,
+        uuid: uuid,
         lastMoved: 0,
         location: {
           x: 0,

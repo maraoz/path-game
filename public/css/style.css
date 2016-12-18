@@ -1,8 +1,18 @@
 .map-row {
   height: 32px;
 }
+
 .tile {
   width: 32px;
   height: 32px;
   display: inline;
+}
+
+.player {
+  width: 32px;
+  height: 32px;
+  display: inline;
+  position:absolute;
+  top: 96px;
+  left: 96px;
 }
