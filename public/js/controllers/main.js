@@ -1,6 +1,7 @@
-angular.module('chunkController', [])
+angular.module('gameController', [])
 
-	.controller('mainController', ['$scope','$http','Chunks', function($scope, $http, Chunks) {
+	.controller('mainController', ['$scope','$http','Chunks', 'Players',
+              function($scope, $http, Chunks, Players) {
 		$scope.formData = {};
 		$scope.loading = true;
 

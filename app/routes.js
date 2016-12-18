@@ -54,20 +54,25 @@ module.exports = function(app) {
     res.json(req.player);
   });
 
-  app.get('/api/chunks', function (req, res) {
-    getChunks(res);
-  });
-
-  app.post('/api/chunks', function (req, res) {
-    Chunk.create({
-      text: req.body.text,
-      done: false
-    }, function (err, chunk) {
-      if (err)
-        res.send(err);
-      getChunks(res);
+  app.post('/api/players', function (req, res) {
+    var ip = req.connection.remoteAddress;
+    Player.create({
+      lastMoved: 0,
+      location: {
+        x: 0,
+        y: 0,
+      }
+    }, function (err, player) {
+      if (err) {
+        return res.send(err);
+      }
+      res.json(player);
     });
 
+  });
+
+  app.get('/api/chunks', function (req, res) {
+    getChunks(res);
   });
 
   app.get('*', function (req, res) {

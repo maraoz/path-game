@@ -1,1 +1,5 @@
-angular.module('pathGame', ['chunkController', 'chunkService']);
+angular.module('pathGame',[
+  'gameController',
+  'playerService',
+  'chunkService',
+]);

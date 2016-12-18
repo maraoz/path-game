@@ -1,0 +1,21 @@
+{
+  "name": "path-game",
+  "description": "Path game",
+  "main": "server.js",
+  "authors": [
+    "Manuel Araoz"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "directory": "public/bower_components",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "a0-angular-storage": "^0.0.15"
+  }
+}

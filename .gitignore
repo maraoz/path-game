@@ -16,3 +16,5 @@ node_modules
 
 *.swp
 *.swo
+
+public/bower_components/
