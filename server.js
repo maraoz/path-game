@@ -1,11 +1,11 @@
-var express = require('express');
-var app = express();
-var mongoose = require('mongoose');
-var port = process.env.PORT || 8080;
-var database = require('./config/database');
-var morgan = require('morgan');
-var bodyParser = require('body-parser');
-var methodOverride = require('method-override');
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const port = process.env.PORT || 8080;
+const database = require('./config/database');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const methodOverride = require('method-override');
 
 mongoose.connect(database.localUrl);
 

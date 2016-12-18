@@ -1,0 +1,8 @@
+.map-row {
+  height: 32px;
+}
+.tile {
+  width: 32px;
+  height: 32px;
+  display: inline;
+}

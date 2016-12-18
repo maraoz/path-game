@@ -1,57 +1,76 @@
-var Todo = require('./models/todo');
+var Chunk = require('./models/chunk');
+var Player = require('./models/player');
 
-function getTodos(res) {
-    Todo.find(function (err, todos) {
+const getChunks = (res) => {
+  Chunk.find(function (err, chunks) {
+    if (err) {
+      res.send(err);
+    }
 
-        // if there is an error retrieving, send the error. nothing after res.send(err) will execute
-        if (err) {
-            res.send(err);
+    if (chunks.length === 0) {
+      var map = [];
+      for (var i = 0; i<7; i++) {
+        map[i] = [];
+        for (var j = 0; j<7; j++) {
+          map[i][j] = (i%2 && j%2)?1:0
         }
+      }
+      console.log(map);
+      var genesis = new Chunk({
+        map,
+        location: {
+          x: 0,
+          y: 0,
+        }
+      });
+      genesis.save()
+      return res.json([genesis]);
+      
+    }
+    return res.json(chunks);
 
-        res.json(todos); // return all todos in JSON format
-    });
+  });
 };
 
-module.exports = function (app) {
+module.exports = function(app) {
 
-    // api ---------------------------------------------------------------------
-    // get all todos
-    app.get('/api/todos', function (req, res) {
-        // use mongoose to get all todos in the database
-        getTodos(res);
+	app.param('playerId', function(req, res, next, id) {
+
+		Playr.findOne(id, (err, player) => {
+			if (err) {
+				return next(err);
+			}
+			if (player) {
+				req.player = player;
+				return next();
+			}
+
+		  next(new Error('failed to load player'));
+			
+		});
+	});
+
+  app.get('/api/players/:playerId', function (req, res) {
+    res.json(req.player);
+  });
+
+  app.get('/api/chunks', function (req, res) {
+    getChunks(res);
+  });
+
+  app.post('/api/chunks', function (req, res) {
+    Chunk.create({
+      text: req.body.text,
+      done: false
+    }, function (err, chunk) {
+      if (err)
+        res.send(err);
+      getChunks(res);
     });
 
-    // create todo and send back all todos after creation
-    app.post('/api/todos', function (req, res) {
+  });
 
-        // create a todo, information comes from AJAX request from Angular
-        Todo.create({
-            text: req.body.text,
-            done: false
-        }, function (err, todo) {
-            if (err)
-                res.send(err);
-
-            // get and return all the todos after you create another
-            getTodos(res);
-        });
-
-    });
-
-    // delete a todo
-    app.delete('/api/todos/:todo_id', function (req, res) {
-        Todo.remove({
-            _id: req.params.todo_id
-        }, function (err, todo) {
-            if (err)
-                res.send(err);
-
-            getTodos(res);
-        });
-    });
-
-    // application -------------------------------------------------------------
-    app.get('*', function (req, res) {
-        res.sendFile(__dirname + '/public/index.html'); // load the single view file (angular will handle the page changes on the front-end)
-    });
+  app.get('*', function (req, res) {
+    res.sendFile(__dirname + '/public/index.html');
+  });
 };
