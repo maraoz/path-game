@@ -5,11 +5,17 @@ angular.module('gameController', [])
 		$scope.formData = {};
 		$scope.loading = true;
 
-		Chunks.get()
-			.success(function(data) {
-				$scope.chunks = data;
-				$scope.loading = false;
-			});
+    Players.get()
+      .then(function(player) {
+        $scope.player = player;
+      
+        return Chunks.get()
+          .success(function(chunks) {
+            $scope.chunks = chunks;
+            $scope.loading = false;
+          });
+      })
+      .catch(console.log)
 
 
 	}]);

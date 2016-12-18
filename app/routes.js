@@ -1,5 +1,6 @@
-var Chunk = require('./models/chunk');
-var Player = require('./models/player');
+const Chunk = require('./models/chunk');
+const Player = require('./models/player');
+const crypto = require('crypto');
 
 const getChunks = (res) => {
   Chunk.find(function (err, chunks) {
@@ -34,40 +35,46 @@ const getChunks = (res) => {
 
 module.exports = function(app) {
 
-	app.param('playerId', function(req, res, next, id) {
+	app.param('playerId', function(req, res, next, uuid) {
 
-		Playr.findOne(id, (err, player) => {
+		Player.findOne({uuid: uuid}, (err, player) => {
 			if (err) {
 				return next(err);
 			}
 			if (player) {
 				req.player = player;
-				return next();
 			}
-
-		  next(new Error('failed to load player'));
-			
+      return next();
 		});
 	});
 
   app.get('/api/players/:playerId', function (req, res) {
+    if (!req.player) {
+      // if no player, create one
+      var ip = req.connection.remoteAddress;
+      var hash = crypto.createHash('sha256')
+              .update(ip+'s3cretS4lt', 'utf8').digest('hex')
+      console.log(hash);
+      Player.create({
+        uuid: hash,
+        lastMoved: 0,
+        location: {
+          x: 0,
+          y: 0,
+        }
+      }, function (err, player) {
+        if (err) {
+          return res.send(err);
+        }
+        console.log(player)
+        res.json(player);
+      });
+      return; 
+    }
     res.json(req.player);
   });
 
   app.post('/api/players', function (req, res) {
-    var ip = req.connection.remoteAddress;
-    Player.create({
-      lastMoved: 0,
-      location: {
-        x: 0,
-        y: 0,
-      }
-    }, function (err, player) {
-      if (err) {
-        return res.send(err);
-      }
-      res.json(player);
-    });
 
   });
 
